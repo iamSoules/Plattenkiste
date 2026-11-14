@@ -7,7 +7,7 @@
     <RootNamespace>Plattenkiste</RootNamespace>
     <LangVersion>latest</LangVersion>
     <ApplicationIcon>$(MSBuildThisFileDirectory)..\..\..\assets\icon.ico</ApplicationIcon>
-    <Version Condition="'$(Version)' == ''">1.1.0</Version>
+    <Version Condition="'$(Version)' == ''">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../../../VERSION').Trim())</Version>
     <Product>Plattenkiste</Product>
     <Description>Plattenkiste – Spotify-Playlists als M3U, Duplikate aufräumen, Songs taggen</Description>
     <PlatformTarget>AnyCPU</PlatformTarget>

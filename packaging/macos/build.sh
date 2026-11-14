@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Baut Plattenkiste.app für macOS und packt sie als ZIP nach dist/.
 #
-#   packaging/macos/build.sh [version]
+#   packaging/macos/build.sh [version]   (Standard: Inhalt der Datei VERSION)
 #
 # Muss auf einem Mac laufen (Python 3.10+). Die Architektur (Apple Silicon / Intel)
 # richtet sich nach dem Python, mit dem gebaut wird.
 set -euo pipefail
 
-VERSION="${1:-1.1.0}"; VERSION="${VERSION#v}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+VERSION="${1:-$(cat "$ROOT/VERSION")}"; VERSION="${VERSION#v}"
 BUILD="$ROOT/build/macos"
 ARCH="$(uname -m)"; [ "$ARCH" = "x86_64" ] && ARCH_NAME="intel" || ARCH_NAME="apple-silicon"
 

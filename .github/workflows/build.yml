@@ -1,13 +1,21 @@
 name: Build & Release
 
 # Baut bei jedem Push die Pakete für Windows und macOS.
-# Ein Tag wie "v1.2.0" erstellt zusätzlich ein GitHub-Release mit allen Downloads.
+# Ein Release mit allen Downloads entsteht, wenn
+#   - ein Tag wie "v1.2.0" gepusht wird, oder
+#   - die Commit-Nachricht "[release]" enthält (Version aus der Datei VERSION), oder
+#   - der Workflow von Hand mit "release" gestartet wird.
 on:
   push:
     branches: ["**"]
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      release:
+        description: "Release mit der Version aus VERSION veröffentlichen"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -22,7 +30,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: "8.0.x" }
       - name: Version bestimmen
-        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v//p' | grep . || echo 0.0.0-dev)" >> "$GITHUB_ENV"
+        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v\([0-9]\)/\1/p' | grep . || cat VERSION)" >> "$GITHUB_ENV"
       - run: python packaging/windows/build.py --version "$VERSION"
       - uses: actions/upload-artifact@v4
         with:
@@ -41,7 +49,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.13" }
       - name: Version bestimmen
-        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v//p' | grep . || echo 0.0.0-dev)" >> "$GITHUB_ENV"
+        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v\([0-9]\)/\1/p' | grep . || cat VERSION)" >> "$GITHUB_ENV"
       - run: packaging/macos/build.sh "$VERSION"
       - name: Start-Test (App muss sich ohne Fehler importieren lassen)
         run: |
@@ -57,17 +65,26 @@ jobs:
           compression-level: 0
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: >-
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.release)
     needs: [windows, macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+      - name: Version bestimmen
+        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v\([0-9]\)/\1/p' | grep . || cat VERSION)" >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with: { path: dist, merge-multiple: true }
       - uses: softprops/action-gh-release@v2
         with:
-          name: Plattenkiste ${{ github.ref_name }}
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          name: Plattenkiste ${{ env.VERSION }}
+          make_latest: true
           files: dist/*
           body: |
             ## Downloads

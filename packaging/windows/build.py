@@ -1,6 +1,6 @@
 """Baut die beiden Windows-Pakete von Plattenkiste.
 
-    python packaging/windows/build.py [--version 1.2.0]
+    python packaging/windows/build.py [--version 1.2.0]   (Standard: Inhalt der Datei VERSION)
 
 Ergebnis in dist/:
     Plattenkiste-<version>-windows-portable.exe   einzelne EXE, entpackt sich beim ersten Start
@@ -84,7 +84,7 @@ def dotnet_build(project: Path, version: str) -> Path:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--version", default="1.1.0")
+    ap.add_argument("--version", default=(ROOT / "VERSION").read_text().strip())
     version = ap.parse_args().version.lstrip("v")
 
     BUILD.mkdir(parents=True, exist_ok=True)

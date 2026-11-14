@@ -84,11 +84,16 @@ packaging/macos/      build.sh → Plattenkiste.app
 
 ## Neues Release veröffentlichen
 
+1. Die neue Versionsnummer in die Datei `VERSION` schreiben, z. B. `1.2.0`.
+2. Committen mit `[release]` in der Nachricht und pushen:
+
 ```bash
-git tag v1.2.0
-git push origin v1.2.0
+git commit -am "Version 1.2.0 [release]"
+git push
 ```
 
-GitHub Actions baut dann die Windows- und macOS-Pakete und legt das Release mit allen Downloads an.
+GitHub Actions baut dann die Windows- und macOS-Programme und legt das Release `v1.2.0` mit allen Downloads an.
+Ein gepushter Tag `v1.2.0` oder der Button „Run workflow“ unter **Actions** (mit Haken bei „release“) geht genauso.
+
 Die Programme lassen sich auch selbst bauen: `python packaging/windows/build.py` (auf jedem System, braucht das .NET SDK)
 bzw. `packaging/macos/build.sh` (nur auf dem Mac). Details stehen in [`packaging/windows/README.md`](packaging/windows/README.md).
