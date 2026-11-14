@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.zip
+*.exe
+packaging/**/bin/
+packaging/**/obj/
+packaging/**/payload.zip
+packaging/**/version.txt

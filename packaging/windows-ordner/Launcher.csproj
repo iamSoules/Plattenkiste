@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>Plattenkiste</AssemblyName>
+    <RootNamespace>Plattenkiste</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Version>1.1.0</Version>
+    <Product>Plattenkiste</Product>
+    <Description>Plattenkiste – Spotify-Playlists als M3U und Duplikate aufräumen</Description>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

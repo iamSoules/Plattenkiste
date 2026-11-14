@@ -1,0 +1,5 @@
+PySide6-Essentials>=6.6
+mutagen>=1.47
+rapidfuzz>=3.0
+requests>=2.31
+send2trash>=1.8
