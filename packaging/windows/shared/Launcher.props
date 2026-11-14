@@ -1,18 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <!-- Gemeinsame Einstellungen beider Windows-Launcher -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>Plattenkiste</AssemblyName>
     <RootNamespace>Plattenkiste</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
+    <ApplicationIcon>$(MSBuildThisFileDirectory)..\..\..\assets\icon.ico</ApplicationIcon>
+    <Version Condition="'$(Version)' == ''">1.1.0</Version>
     <Product>Plattenkiste</Product>
-    <Description>Plattenkiste – Spotify-Playlists als M3U und Duplikate aufräumen</Description>
+    <Description>Plattenkiste – Spotify-Playlists als M3U, Duplikate aufräumen, Songs taggen</Description>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)PythonLauncher.cs" Link="PythonLauncher.cs" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />

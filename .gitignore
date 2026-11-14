@@ -6,3 +6,12 @@ packaging/**/bin/
 packaging/**/obj/
 packaging/**/payload.zip
 packaging/**/version.txt
+
+# Build
+build/
+dist/
+.venv/
+
+# System
+.DS_Store
+Thumbs.db

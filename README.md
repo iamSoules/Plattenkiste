@@ -1,10 +1,28 @@
 # Plattenkiste
 
 Spotify-Playlist-Link + Ordner mit FLAC-Dateien → M3U-Playlist mit denselben Songs.
+Dazu: doppelte Titel aufräumen und Songs gemeinsam taggen.
 
-![Screenshot](screenshot.png)
+![Screenshot](docs/screenshot.png)
 
-## Starten
+## Download
+
+Fertige Versionen für **Windows** und **macOS** gibt es unter
+[**Releases**](https://github.com/iamSoules/Plattenkiste/releases/latest). Python wird dafür nicht gebraucht.
+
+| System | Datei |
+|---|---|
+| Windows (eine Datei) | `…-windows-portable.exe` starten. Beim ersten Start richtet sie sich selbst ein. |
+| Windows (Ordner) | `…-windows.zip` entpacken und `Plattenkiste.exe` im Ordner starten |
+| macOS Apple Silicon (M1 und neuer) | `…-macos-apple-silicon.zip` |
+| macOS Intel | `…-macos-intel.zip` |
+
+- **macOS:** ZIP entpacken und `Plattenkiste.app` in „Programme“ ziehen. Die App ist nicht von Apple beglaubigt. Öffne sie beim ersten Mal deshalb so:
+  Systemeinstellungen → Datenschutz & Sicherheit → „Dennoch öffnen“.
+- **Windows:** Bei der SmartScreen-Warnung „Weitere Informationen“ → „Trotzdem ausführen“.
+
+## Aus dem Quellcode starten
+
 - **Windows:** `start.bat` doppelklicken (braucht Python 3.10+ von python.org)
 - **macOS/Linux:** `./start.sh`
 
@@ -27,7 +45,7 @@ Beim ersten Start wird automatisch eine virtuelle Umgebung mit den Abhängigkeit
 
 ## Reiter „Duplikate“
 
-![Duplikate](screenshot-duplikate.png)
+![Duplikate](docs/screenshot-duplikate.png)
 
 Findet doppelte Titel in deinem Musikordner, auch über verschiedene Editionen hinweg
 (z. B. „25“ und „25 (Deluxe Edition)“).
@@ -56,6 +74,24 @@ M3U-Unterstützung lassen sich die Songs dann z. B. über **Genres** wie eine Pl
 - **„in einem Feld“** speichert mehrere Werte als `Rock; Roadtrip` für Player, die nur den ersten Genre-Eintrag lesen
 - Die Seitenleiste zeigt alle vorhandenen Werte mit Anzahl. Ein Klick filtert die Liste.
 
-## Windows-Pakete
+## Projektaufbau
 
-Die Launcher-Quellen und die Bauanleitung liegen in [`packaging/`](packaging/README.md).
+```
+src/                  App (app.py = Oberfläche, core.py = Spotify & Abgleich, dupes.py, tagger.py)
+assets/icon.ico       Windows-Icon
+docs/                 Screenshots
+packaging/windows/    EXE-Launcher (C#) + build.py
+packaging/macos/      build.sh → Plattenkiste.app
+.github/workflows/    baut bei jedem Push beide Pakete
+```
+
+## Neues Release veröffentlichen
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+GitHub Actions baut dann die Windows- und macOS-Pakete und legt das Release mit allen Downloads an.
+Lokal bauen geht auch: `python packaging/windows/build.py` (überall, braucht das .NET SDK) bzw.
+`packaging/macos/build.sh` (nur auf dem Mac). Details stehen in [`packaging/windows/README.md`](packaging/windows/README.md).

@@ -1,0 +1,85 @@
+name: Build & Release
+
+# Baut bei jedem Push die Pakete für Windows und macOS.
+# Ein Tag wie "v1.2.0" erstellt zusätzlich ein GitHub-Release mit allen Downloads.
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest   # die Windows-Pakete lassen sich plattformübergreifend bauen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+      - name: Version bestimmen
+        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v//p' | grep . || echo 0.0.0-dev)" >> "$GITHUB_ENV"
+      - run: python packaging/windows/build.py --version "$VERSION"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/*
+          compression-level: 0
+
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]   # Apple Silicon, Intel
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - name: Version bestimmen
+        run: echo "VERSION=$(echo '${{ github.ref_name }}' | sed -n 's/^v//p' | grep . || echo 0.0.0-dev)" >> "$GITHUB_ENV"
+      - run: packaging/macos/build.sh "$VERSION"
+      - name: Start-Test (App muss sich ohne Fehler importieren lassen)
+        run: |
+          APP=build/macos/dist/Plattenkiste.app/Contents/MacOS/Plattenkiste
+          QT_QPA_PLATFORM=offscreen "$APP" & PID=$!
+          sleep 15
+          kill -0 $PID   # läuft noch → kein Absturz beim Start
+          kill $PID
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.runner }}
+          path: dist/*
+          compression-level: 0
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Plattenkiste ${{ github.ref_name }}
+          files: dist/*
+          body: |
+            ## Downloads
+
+            | System | Datei |
+            |---|---|
+            | **Windows** (eine Datei) | `Plattenkiste-…-windows-portable.exe` – einfach starten, richtet sich beim ersten Start selbst ein |
+            | **Windows** (Ordner) | `Plattenkiste-…-windows.zip` – entpacken, `Plattenkiste.exe` im Ordner starten |
+            | **macOS** Apple Silicon (M1–M4) | `Plattenkiste-…-macos-apple-silicon.zip` |
+            | **macOS** Intel | `Plattenkiste-…-macos-intel.zip` |
+
+            **macOS:** ZIP entpacken und `Plattenkiste.app` in „Programme“ ziehen. Die App ist nicht von Apple beglaubigt.
+            Beim ersten Start daher: Systemeinstellungen → Datenschutz & Sicherheit → „Dennoch öffnen“.
+
+            **Windows:** Bei der SmartScreen-Warnung auf „Weitere Informationen“ → „Trotzdem ausführen“ klicken.
