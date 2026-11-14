@@ -1,41 +1,38 @@
 # Plattenkiste
 
-Spotify-Playlist-Link + Ordner mit FLAC-Dateien → M3U-Playlist mit denselben Songs.
-Dazu: doppelte Titel aufräumen und Songs gemeinsam taggen.
+Eigenständiges Programm für Windows und macOS, ohne Installation:
+
+- **Playlist erstellen:** Spotify-Playlist-Link + Ordner mit FLAC-Dateien → M3U-Playlist mit denselben Songs
+- **Duplikate:** doppelte Titel im Musikordner finden und aufräumen
+- **Tags:** ausgewählten Songs gemeinsam ein Genre, eine Gruppierung oder eine Stimmung geben
 
 ![Screenshot](docs/screenshot.png)
 
 ## Download
 
-Fertige Versionen für **Windows** und **macOS** gibt es unter
-[**Releases**](https://github.com/iamSoules/Plattenkiste/releases/latest). Python wird dafür nicht gebraucht.
+Unter [**Releases**](https://github.com/iamSoules/Plattenkiste/releases/latest) die passende Datei herunterladen.
+Plattenkiste wird nicht installiert, und Python brauchst du auch nicht. Alles steckt im Programm.
 
-| System | Datei |
-|---|---|
-| Windows (eine Datei) | `…-windows-portable.exe` starten. Beim ersten Start richtet sie sich selbst ein. |
-| Windows (Ordner) | `…-windows.zip` entpacken und `Plattenkiste.exe` im Ordner starten |
-| macOS Apple Silicon (M1 und neuer) | `…-macos-apple-silicon.zip` |
-| macOS Intel | `…-macos-intel.zip` |
+| System | Datei | So startest du sie |
+|---|---|---|
+| Windows | `…-windows-portable.exe` | **eine einzelne Datei**, einfach doppelklicken. Beim ersten Start richtet sie sich kurz selbst ein. |
+| Windows | `…-windows.zip` | **Ordner-Version**: entpacken und `Plattenkiste.exe` im Ordner starten (z. B. vom USB-Stick) |
+| macOS Apple Silicon (M1 und neuer) | `…-macos-apple-silicon.zip` | entpacken und `Plattenkiste.app` starten |
+| macOS Intel | `…-macos-intel.zip` | entpacken und `Plattenkiste.app` starten |
 
-- **macOS:** ZIP entpacken und `Plattenkiste.app` in „Programme“ ziehen. Die App ist nicht von Apple beglaubigt. Öffne sie beim ersten Mal deshalb so:
+- **macOS:** Die App ist nicht von Apple beglaubigt. Öffne sie beim ersten Mal deshalb so:
   Systemeinstellungen → Datenschutz & Sicherheit → „Dennoch öffnen“.
 - **Windows:** Bei der SmartScreen-Warnung „Weitere Informationen“ → „Trotzdem ausführen“.
 
-## Aus dem Quellcode starten
+## Reiter „Playlist erstellen“
 
-- **Windows:** `start.bat` doppelklicken (braucht Python 3.10+ von python.org)
-- **macOS/Linux:** `./start.sh`
-
-Beim ersten Start wird automatisch eine virtuelle Umgebung mit den Abhängigkeiten angelegt.
-
-## So geht's
 1. Spotify-Link einfügen → **Laden** (Playlist muss öffentlich sein; Album-Links gehen auch)
 2. **Ordner wählen** – die Tags (Titel, Interpret, Länge, ISRC) aller FLACs werden gelesen
 3. Der Abgleich startet automatisch. Grün = sicher, Gelb = bitte prüfen, Rot = fehlt
 4. Doppelklick auf eine Zeile → anderen Vorschlag oder eine Datei von Hand zuordnen
 5. **M3U speichern**
 
-## Hinweise
+### Hinweise
 - Ohne Zugangsdaten liest die App die öffentliche Spotify-Einbettungsseite – das liefert max. **100 Titel**.
   Für größere Playlists: unter developer.spotify.com eine App anlegen und Client-ID/Secret
   über „Spotify-API …“ eintragen (dann wird auch per ISRC abgeglichen).
@@ -93,5 +90,5 @@ git push origin v1.2.0
 ```
 
 GitHub Actions baut dann die Windows- und macOS-Pakete und legt das Release mit allen Downloads an.
-Lokal bauen geht auch: `python packaging/windows/build.py` (überall, braucht das .NET SDK) bzw.
-`packaging/macos/build.sh` (nur auf dem Mac). Details stehen in [`packaging/windows/README.md`](packaging/windows/README.md).
+Die Programme lassen sich auch selbst bauen: `python packaging/windows/build.py` (auf jedem System, braucht das .NET SDK)
+bzw. `packaging/macos/build.sh` (nur auf dem Mac). Details stehen in [`packaging/windows/README.md`](packaging/windows/README.md).
